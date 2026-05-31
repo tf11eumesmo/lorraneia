@@ -356,7 +356,7 @@ AIS.forEach(ai => {
       <div class="ai-desc">${ai.desc}</div>
     </div>
     ${fileTag}
-    ${hasKey ? '<span class="free-badge">FREE</span>' : '<span class="no-key-badge">SEM CHAVE</span>'}
+    ${hasKey ? '' : '<span class="no-key-badge">SEM CHAVE</span>'}
   `;
   btn.addEventListener("click", () => selectAI(ai));
   sidebar.appendChild(btn);
