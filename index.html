@@ -332,16 +332,6 @@ const AIS = [
     model:"nvidia/nemotron-3-super-120b-a12b:free",
     supportsFiles: false,
     send: sendOpenRouter
-  },
-  {
-    id:"llama33", name:"LLaMA 3.3 70B Instruct", provider:"OpenRouter",
-    desc:"OpenRouter · Texto geral (Meta)",
-    emoji:"◎", color:"#ec4899", bg:"rgba(236,72,153,0.15)", accent:"#f472b6",
-    keyName:"OPENROUTER_KEY", keyUrl:"https://openrouter.ai/keys",
-    freeNote:"Gratuito via OpenRouter (free tier)",
-    model:"meta-llama/llama-3.3-70b-instruct:free",
-    supportsFiles: false,
-    send: sendOpenRouter
   }
 ];
 
@@ -782,7 +772,7 @@ document.addEventListener("paste", async e => {
   var overlay = document.getElementById('sidebar-overlay');
 
   function isMobile() { return window.innerWidth <= 768; }
-  if (isMobile()) { sidebar.classList.add('collapsed'); }
+  // Começa aberta sempre
 
   btn.addEventListener('click', function() {
     var fechada = sidebar.classList.contains('collapsed');
@@ -803,7 +793,7 @@ document.addEventListener("paste", async e => {
     btn.textContent = '☰';
   });
 
-  // Fechar ao clicar em IA no mobile
+  // Fechar ao clicar em IA apenas no celular
   sidebar.addEventListener('click', function(e) {
     if (e.target.closest('.ai-card') && isMobile()) {
       setTimeout(function() {
