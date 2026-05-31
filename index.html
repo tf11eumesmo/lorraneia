@@ -155,7 +155,23 @@
   .sidebar::-webkit-scrollbar { width: 3px; }
   .sidebar::-webkit-scrollbar-track { background: transparent; }
   .sidebar::-webkit-scrollbar-thumb { background: var(--border); border-radius: 999px; }
-  @media (max-width: 640px) { .sidebar { width: 220px; } .ai-desc { display: none; } }
+
+  /* TOGGLE SIDEBAR */
+  .btn-toggle-sidebar { width: 34px; height: 34px; border-radius: 8px; border: 1px solid var(--border); background: transparent; color: var(--muted); cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 18px; transition: all 0.2s; flex-shrink: 0; }
+  .btn-toggle-sidebar:hover { background: var(--surface2); color: var(--text); border-color: var(--border-hover); }
+
+  .sidebar { transition: width 0.25s ease, padding 0.25s ease; overflow: hidden; }
+  .sidebar.collapsed { width: 0 !important; padding: 0 !important; border-right: none !important; }
+
+  /* OVERLAY mobile */
+  #sidebar-overlay { display: none; position: fixed; inset: 0; z-index: 99; background: rgba(0,0,0,0.55); }
+  #sidebar-overlay.visible { display: block; }
+
+  @media (max-width: 768px) {
+    .sidebar { position: fixed; left: 0; top: 60px; bottom: 0; z-index: 100; width: 300px; }
+    .sidebar.collapsed { width: 0 !important; }
+    .ai-desc { display: none; }
+  }
 </style>
 </head>
 <body>
@@ -176,12 +192,17 @@
 </div>
 
 <header>
-  <div class="logo">Lorrane IA</div>
+  <div style="display:flex;align-items:center;gap:10px;">
+    <button class="btn-toggle-sidebar" id="btn-toggle-sidebar" title="Mostrar/ocultar modelos">☰</button>
+    <div class="logo">Lorrane IA</div>
+  </div>
   <div class="current-ai-badge" id="current-badge">
     <span class="dot"></span>
     <span id="current-ai-name">Selecione uma IA</span>
   </div>
 </header>
+
+<div id="sidebar-overlay"></div>
 
 <div class="main">
   <aside class="sidebar" id="sidebar">
@@ -753,7 +774,47 @@ document.addEventListener("paste", async e => {
   }
 });
 
-// ─── LOCK SCREEN ─────────────────────────────────────────────
+
+// ─── TOGGLE SIDEBAR ──────────────────────────────────────────
+(function() {
+  var btn     = document.getElementById('btn-toggle-sidebar');
+  var sidebar = document.getElementById('sidebar');
+  var overlay = document.getElementById('sidebar-overlay');
+
+  function isMobile() { return window.innerWidth <= 768; }
+  if (isMobile()) { sidebar.classList.add('collapsed'); }
+
+  btn.addEventListener('click', function() {
+    var fechada = sidebar.classList.contains('collapsed');
+    if (fechada) {
+      sidebar.classList.remove('collapsed');
+      btn.textContent = '✕';
+      if (isMobile()) overlay.classList.add('visible');
+    } else {
+      sidebar.classList.add('collapsed');
+      btn.textContent = '☰';
+      overlay.classList.remove('visible');
+    }
+  });
+
+  overlay.addEventListener('click', function() {
+    sidebar.classList.add('collapsed');
+    overlay.classList.remove('visible');
+    btn.textContent = '☰';
+  });
+
+  // Fechar ao clicar em IA no mobile
+  sidebar.addEventListener('click', function(e) {
+    if (e.target.closest('.ai-card') && isMobile()) {
+      setTimeout(function() {
+        sidebar.classList.add('collapsed');
+        overlay.classList.remove('visible');
+        btn.textContent = '☰';
+      }, 200);
+    }
+  });
+})();
+
 (function() {
   var lockScreen = document.getElementById("lock-screen");
   var lockInput  = document.getElementById("lock-input");
